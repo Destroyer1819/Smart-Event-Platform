@@ -1,6 +1,4 @@
-require('dotenv').config();
 const express = require('express');
-const mongoose = require('mongoose');
 const session = require('express-session');
 const flash = require('connect-flash');
 const methodOverride = require('method-override');
@@ -9,6 +7,17 @@ const path = require('path');
 const app = express();
 
 // ─── Database Connection ───────────────────────────────────────────────────────
+require('dotenv').config();
+const connectDB = require('./config/db.js');
+
+connectDB();
+
+const Event = require('./models/Event');
+const User = require('./models/User');
+const Booking = require('./models/Booking');
+const Enquiry = require('./models/Enquiry');
+
+
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('✅  MongoDB connected'))
   .catch((err) => console.error('❌  MongoDB connection error:', err));
