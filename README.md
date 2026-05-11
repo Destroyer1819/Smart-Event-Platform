@@ -78,8 +78,8 @@ smart-event-platform/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/<Destroyer1819>/Smart-Event-Platform.git
-cd smart-event-platform
+git clone https://github.com/Destroyer1819/Smart-Event-Platform.git
+cd Smart-Event-Platform
 ```
 
 ### 2. Install dependencies
