@@ -142,4 +142,4 @@ Visit `http://localhost:3000`
 
 ## GitHub Repository
 
-[https://github.com/<Destroyer1819>/smart-event-platform](https://github.com/<Destroyer1819>/smart-event-platform)
+[https://github.com/<Destroyer1819>/smart-event-platform](https://github.com/Destroyer1819/Smart-Event-Platform/tree/main)
