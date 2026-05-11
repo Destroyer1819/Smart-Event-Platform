@@ -78,7 +78,7 @@ smart-event-platform/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/<your-username>/smart-event-platform.git
+git clone https://github.com/<Destroyer1819>/Smart-Event-Platform.git
 cd smart-event-platform
 ```
 
@@ -142,4 +142,4 @@ Visit `http://localhost:3000`
 
 ## GitHub Repository
 
-[https://github.com/<your-username>/smart-event-platform](https://github.com/<your-username>/smart-event-platform)
+[https://github.com/<Destroyer1819>/smart-event-platform](https://github.com/<Destroyer1819>/smart-event-platform)
