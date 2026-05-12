@@ -19,9 +19,268 @@
   <% } %>
 
   <main class="container mt-4">
-    <%-- TODO: Member 3 — build the events page content here --%>
-    <h1><%= title %></h1>
-    <p>Page under construction.</p>
+    <%- include('./partials/header', { title: 'Events', activePage: 'events', user: user }) %>
+
+<!-- Page Header -->
+<section class="bg-gradient text-white py-5 mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="container">
+        <h1 class="display-5 fw-bold mb-3"><i class="fas fa-calendar-alt me-3"></i>All Events</h1>
+        <p class="lead mb-0">Browse all upcoming events by Advanced Events (Pty) Ltd</p>
+    </div>
+</section>
+
+<!-- Search & Filters -->
+<section class="container mb-5">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filter Events</h5>
+        </div>
+        <div class="card-body">
+            <form action="/events" method="GET" class="row g-3">
+                <div class="col-md-3">
+                    <label for="search" class="form-label">Search Events</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" class="form-control" id="search" name="search" 
+                               placeholder="Event name, location..." value="<%= searchQuery || '' %>">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <label for="category" class="form-label">Category</label>
+                    <select class="form-select" id="category" name="category">
+                        <option value="">All Categories</option>
+                        <option value="conference" <%= category === 'conference' ? 'selected' : '' %>>Conference</option>
+                        <option value="workshop" <%= category === 'workshop' ? 'selected' : '' %>>Workshop</option>
+                        <option value="festival" <%= category === 'festival' ? 'selected' : '' %>>Festival</option>
+                        <option value="private" <%= category === 'private' ? 'selected' : '' %>>Private Event</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="dateFrom" class="form-label">From Date</label>
+                    <input type="date" class="form-control" id="dateFrom" name="dateFrom" value="<%= dateFrom || '' %>">
+                </div>
+                <div class="col-md-2">
+                    <label for="dateTo" class="form-label">To Date</label>
+                    <input type="date" class="form-control" id="dateTo" name="dateTo" value="<%= dateTo || '' %>">
+                </div>
+                <div class="col-md-2">
+                    <label for="sortBy" class="form-label">Sort By</label>
+                    <select class="form-select" id="sortBy" name="sortBy">
+                        <option value="date_asc" <%= sortBy === 'date_asc' ? 'selected' : '' %>>Date (Soonest)</option>
+                        <option value="date_desc" <%= sortBy === 'date_desc' ? 'selected' : '' %>>Date (Latest)</option>
+                        <option value="price_asc" <%= sortBy === 'price_asc' ? 'selected' : '' %>>Price (Low to High)</option>
+                        <option value="price_desc" <%= sortBy === 'price_desc' ? 'selected' : '' %>>Price (High to Low)</option>
+                        <option value="popularity" <%= sortBy === 'popularity' ? 'selected' : '' %>>Most Popular</option>
+                    </select>
+                </div>
+                <div class="col-md-1 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100" title="Apply Filters">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Events Statistics -->
+<section class="container mb-4">
+    <div class="row">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-primary text-white text-center shadow-sm">
+                <div class="card-body">
+                    <h3 class="mb-0"><%= totalEvents || 0 %></h3>
+                    <small>Total Events</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white text-center shadow-sm">
+                <div class="card-body">
+                    <h3 class="mb-0"><%= availableEvents || 0 %></h3>
+                    <small>Available Now</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-warning text-dark text-center shadow-sm">
+                <div class="card-body">
+                    <h3 class="mb-0"><%= limitedEvents || 0 %></h3>
+                    <small>Limited Seats</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-info text-white text-center shadow-sm">
+                <div class="card-body">
+                    <h3 class="mb-0"><%= soldOutEvents || 0 %></h3>
+                    <small>Sold Out</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Events Grid -->
+<section class="container mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4><i class="fas fa-list me-2"></i>
+            <% if (searchQuery) { %>
+                Search Results for "<%= searchQuery %>"
+            <% } else if (category) { %>
+                <%= category.charAt(0).toUpperCase() + category.slice(1) %> Events
+            <% } else { %>
+                All Events
+            <% } %>
+        </h4>
+        <span class="badge bg-primary"><%= events ? events.length : 0 %> Events Found</span>
+    </div>
+    
+    <% if (events && events.length > 0) { %>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            <% events.forEach(function(event) { 
+                const capacityPercent = (event.booked / event.capacity) * 100;
+                const isAvailable = event.booked < event.capacity;
+                const seatsLeft = event.capacity - event.booked;
+                const isLimited = seatsLeft <= 5 && seatsLeft > 0;
+                const isSoldOut = seatsLeft <= 0;
+                const eventDate = new Date(event.date);
+                const isUpcoming = eventDate > new Date();
+            %>
+                <div class="col">
+                    <div class="card h-100 shadow-sm hover-card <%= isSoldOut ? 'opacity-75' : '' %>">
+                        <!-- Event Badge -->
+                        <div class="position-absolute top-0 end-0 m-3 z-1">
+                            <% if (isSoldOut) { %>
+                                <span class="badge bg-danger">SOLD OUT</span>
+                            <% } else if (isLimited) { %>
+                                <span class="badge bg-warning text-dark">LIMITED SEATS</span>
+                            <% } else if (!isUpcoming) { %>
+                                <span class="badge bg-secondary">ENDED</span>
+                            <% } %>
+                        </div>
+                        
+                        <div class="card-header bg-primary text-white text-center py-4">
+                            <i class="fas fa-calendar-alt fa-3x"></i>
+                        </div>
+                        <div class="card-body">
+                            <span class="badge bg-info mb-2"><%= event.category.toUpperCase() %></span>
+                            <h5 class="card-title"><%= event.title %></h5>
+                            <p class="card-text text-muted"><%= event.description ? event.description.substring(0, 100) : '' %>...</p>
+                            
+                            <hr class="my-3">
+                            
+                            <div class="mb-2">
+                                <i class="fas fa-calendar-day text-primary me-2"></i>
+                                <span><%= eventDate.toLocaleDateString('en-ZA', { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' }) %></span>
+                            </div>
+                            <div class="mb-2">
+                                <i class="fas fa-clock text-primary me-2"></i>
+                                <span><%= event.startTime %> - <%= event.endTime %></span>
+                            </div>
+                            <div class="mb-2">
+                                <i class="fas fa-map-marker-alt text-primary me-2"></i>
+                                <span><%= event.location %></span>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <h4 class="text-primary mb-0">R <%= event.price.toFixed(2) %></h4>
+                                <small class="text-muted">per ticket</small>
+                            </div>
+                            
+                            <% if (isAvailable) { %>
+                                <div class="mt-3">
+                                    <div class="d-flex justify-content-between small text-muted">
+                                        <span><%= seatsLeft %> seats left</span>
+                                        <span><%= event.booked %>/<%= event.capacity %></span>
+                                    </div>
+                                    <div class="progress" style="height: 8px;">
+                                        <div class="progress-bar <%= isLimited ? 'bg-warning' : 'bg-success' %>" role="progressbar" 
+                                             style="width: <%= capacityPercent %>%" 
+                                             aria-valuenow="<%= capacityPercent %>" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                            <% } %>
+                        </div>
+                        <div class="card-footer bg-white border-top-0">
+                            <% if (isAvailable && user) { %>
+                                <a href="/user/bookings/<%= event._id %>" class="btn btn-primary w-100">
+                                    <i class="fas fa-ticket-alt me-2"></i>Book Now
+                                </a>
+                            <% } else if (isAvailable && !user) { %>
+                                <a href="/auth/login" class="btn btn-outline-primary w-100">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Login to Book
+                                </a>
+                            <% } else { %>
+                                <button class="btn btn-secondary w-100" disabled>
+                                    <i class="fas fa-times-circle me-2"></i>Sold Out
+                                </button>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+        
+        <!-- Pagination -->
+        <% if (totalPages && totalPages > 1) { %>
+            <nav class="mt-5">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item <%= currentPage <= 1 ? 'disabled' : '' %>">
+                        <a class="page-link" href="?page=<%= currentPage - 1 %><%= searchQuery ? '&search=' + searchQuery : '' %><%= category ? '&category=' + category : '' %>">
+                            <i class="fas fa-chevron-left"></i> Previous
+                        </a>
+                    </li>
+                    
+                    <% for (let i = 1; i <= totalPages; i++) { %>
+                        <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                            <a class="page-link" href="?page=<%= i %><%= searchQuery ? '&search=' + searchQuery : '' %><%= category ? '&category=' + category : '' %>">
+                                <%= i %>
+                            </a>
+                        </li>
+                    <% } %>
+                    
+                    <li class="page-item <%= currentPage >= totalPages ? 'disabled' : '' %>">
+                        <a class="page-link" href="?page=<%= currentPage + 1 %><%= searchQuery ? '&search=' + searchQuery : '' %><%= category ? '&category=' + category : '' %>">
+                            Next <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        <% } %>
+        
+    <% } else { %>
+        <div class="text-center py-5">
+            <i class="fas fa-calendar-times fa-5x text-muted mb-3"></i>
+            <h4 class="mb-3">No Events Found</h4>
+            <p class="text-muted mb-4">
+                <% if (searchQuery || category) { %>
+                    Try adjusting your search filters or browse all events.
+                <% } else { %>
+                    Check back later for new events from Advanced Events (Pty) Ltd.
+                <% } %>
+            </p>
+            <a href="/events" class="btn btn-primary">
+                <i class="fas fa-redo me-2"></i>Clear All Filters
+            </a>
+        </div>
+    <% } %>
+</section>
+
+<%- include('./partials/footer') %>
+
+<style>
+    .hover-card {
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+    }
+    .bg-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+</style>
   </main>
 
   <%- include('partials/footer') %>
