@@ -19,18 +19,18 @@ exports.postRegister = async (req, res, next) => {
 
     if (!name || !email || !password) {
       req.flash('error', 'Please complete all required fields.');
-      return res.redirect('/register');
+      return res.redirect('/auth/register');
     }
 
     if (confirmPassword && password !== confirmPassword) {
       req.flash('error', 'Passwords do not match');
-      return res.redirect('/register');
+      return res.redirect('/auth/register');
     }
 
     const existingUser = await User.findOne({email: email.toLowerCase().trim() });
     if (existingUser) {
       req.flash('error', 'An account with this email already exists.');
-      return res.redirect('/register');
+      return res.redirect('/auth/register');
     }
 
     const hashedpassword = await bcrypt.hash(password, 12);
@@ -49,12 +49,12 @@ exports.postRegister = async (req, res, next) => {
     })
 
     req.flash('success', 'Registration successful. Please log in');
-    res.redirect('/login');
+    res.redirect('/auth/login');
 
   }catch(error){
     if (error.code === 11000) {
       req.flash('error', 'An account with this email already exists.');
-      return res.redirect('/register');
+      return res.redirect('/auth/register');
     } 
 
     next(error);
@@ -73,19 +73,19 @@ exports.postLogin = async (req, res, next) => {
 
     if (!email || !password) {
       req.flash('error', 'Please enter your Email or Password.');
-      return res.redirect('/login');
+      return res.redirect('/auth/login');
     }
 
     const user = await User.findOne({email: email.toLowerCase().trim() });
     if (!user) {
       req.flash('error', 'Invalid Email or Password.');
-      return res.redirect('/login');
+      return res.redirect('/auth/login');
     }
 
-    const passwordMastches = await bcrypt.compare(password, user.password);
-    if (!passwordMastches) {
+    const passwordMatches  = await bcrypt.compare(password, user.password);
+    if (!passwordMatches ) {
       req.flash('error', 'Invalid Email or Password.');
-      return res.redirect('/login');
+      return res.redirect('/auth/login');
     }
 
     req.session.user = {
@@ -109,6 +109,6 @@ exports.logout = (req, res, next) => {
     if (error) return next(error);
 
     res.clearCookie('connect.sid')
-    res.redirect('/login')
+    res.redirect('/auth/login')
   })
 };

@@ -56,7 +56,7 @@ exports.getManagePage = async (req, res, next) => {
   try {
     const events = await Event.find().sort({createdAt: -1});
 
-    res.render('events', {
+    res.render('events/manage', {
       title: 'Manage Events',
       events
     });
@@ -145,7 +145,7 @@ exports.updateEvent = async (req, res, next) => {
     });
 
     req.flash('success', 'Event updated successfully.')
-    res.redirect('/bookings/dashboard')
+    res.redirect('/events/manage')
   } catch (error) {
     next(error);
   }

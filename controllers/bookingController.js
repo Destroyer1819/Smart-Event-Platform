@@ -39,19 +39,17 @@ exports.getDashboard = async (req, res, next) => {
 exports.bookTicket = async (req, res, next) => {
   // TODO: Check event capacity, create booking, decrement event capacity
   try {
-    const eventId = req.params.id || req.body.eventId;
-    const userId = req.session.user.id; 
-
+    const eventId = req.params.eventId || req.params.id || req.body.eventId;    const userId = req.session.user.id; 
     const event = await Event.findById(eventId);
 
     if (!event) {
       req.flash('error', 'Event not found.');
-      return res.redirect('/dashboard');
+      return res.redirect('/bookings/dashboard');
     }
 
     if (event.capacity <= 0) {
       req.flash('error', 'This event is fully booked.');
-      return res.redirect('/dashboard');
+      return res.redirect('/bookings/dashboard');
     }
  
     const existingBooking = await Booking.findOne({
@@ -61,7 +59,7 @@ exports.bookTicket = async (req, res, next) => {
 
     if (existingBooking) {
       req.flash('error', 'You already booked this event.');
-      return res.redirect('/dashboard');
+      return res.redirect('/bookings/dashboard');
     }
 
     await Booking.create({
@@ -74,7 +72,7 @@ exports.bookTicket = async (req, res, next) => {
     await event.save();
 
     req.flash('success', 'Ticket booked successfully.');
-      return res.redirect('/dashboard');
+      return res.redirect('/bookings/dashboard');
 
   } catch (error) {
     next(error); 
@@ -84,17 +82,17 @@ exports.bookTicket = async (req, res, next) => {
 exports.cancelBooking = async (req, res, next) => {
   // TODO: Delete booking, restore event capacity
   try {
-    const bookingId = req.params.id;
+    const bookingId = req.params.bookingId || req.params.id;
     const booking = await Booking.findById(bookingId);
 
     if (!booking) {
       req.flash('error', 'Booking not found.');
-      return res.redirect('/dashboard');
+      return res.redirect('/bookings/dashboard');
     }
 
     if (req.session.user.role !== 'admin' && booking.user.toString() !== req.session.user.id) {
       req.flash('error', 'You are not allowed to cancel this booking.');
-      return res.redirect('/dashboard');
+      return res.redirect('/bookings/dashboard');
     }
 
     await Event.findByIdAndUpdate(booking.event, {
@@ -104,7 +102,7 @@ exports.cancelBooking = async (req, res, next) => {
     await Booking.findByIdAndDelete(bookingId);
 
     req.flash('success', 'Booking cancelled successfully.');
-      return res.redirect('/dashboard');
+      return res.redirect('/bookings/dashboard');
 
   } catch (error) {
     next(error);

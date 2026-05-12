@@ -12,4 +12,4 @@ const connectDB = async () => {
 
 module.exports = connectDB;
 
-connectDB();
+//connectDB(); removed because its already called inside app.js
