@@ -19,9 +19,669 @@
   <% } %>
 
   <main class="container mt-4">
-    <%-- TODO: Member 3 — build the auth page content here --%>
-    <h1><%= title %></h1>
-    <p>Page under construction.</p>
+    <%- include('./partials/header', { title: 'Authentication', activePage: 'login', user: user }) %>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            
+            <!-- Auth Card -->
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <div class="mb-2">
+                        <i class="fas fa-user-circle fa-3x"></i>
+                    </div>
+                    <h4 class="mb-0 fw-bold">Welcome to Advanced Events</h4>
+                    <p class="mb-0 small">Login or create your account</p>
+                </div>
+                
+                <!-- Tab Navigation -->
+                <ul class="nav nav-pills nav-fill bg-light" id="authTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active fw-semibold" 
+                                id="login-tab" 
+                                data-bs-toggle="pill" 
+                                data-bs-target="#login" 
+                                type="button" 
+                                role="tab" 
+                                aria-selected="true">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link fw-semibold" 
+                                id="register-tab" 
+                                data-bs-toggle="pill" 
+                                data-bs-target="#register" 
+                                type="button" 
+                                role="tab" 
+                                aria-selected="false">
+                            <i class="fas fa-user-plus me-2"></i>Register
+                        </button>
+                    </li>
+                </ul>
+                
+                <div class="card-body p-4">
+                    
+                    <!-- Flash Messages -->
+                    <% if (typeof error !== 'undefined' && error) { %>
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="fas fa-exclamation-circle me-2"></i><%= error %>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    <% } %>
+                    
+                    <% if (typeof success !== 'undefined' && success) { %>
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="fas fa-check-circle me-2"></i><%= success %>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    <% } %>
+                    
+                    <!-- Tab Content -->
+                    <div class="tab-content" id="authTabContent">
+                        
+                        <!-- ==================== LOGIN FORM ==================== -->
+                        <div class="tab-pane fade show active" id="login" role="tabpanel">
+                            <form action="/auth/login" method="POST" id="loginForm" novalidate>
+                                
+                                <div class="mb-3">
+                                    <label for="loginEmail" class="form-label fw-semibold">
+                                        <i class="fas fa-envelope me-2 text-primary"></i>Email Address
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light">
+                                            <i class="fas fa-envelope text-muted"></i>
+                                        </span>
+                                        <input type="email" 
+                                               class="form-control" 
+                                               id="loginEmail" 
+                                               name="email" 
+                                               required 
+                                               placeholder="Enter your email"
+                                               autocomplete="email"
+                                               value="<%= typeof email !== 'undefined' ? email : '' %>">
+                                    </div>
+                                    <div class="invalid-feedback">Please enter a valid email address.</div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="loginPassword" class="form-label fw-semibold">
+                                        <i class="fas fa-lock me-2 text-primary"></i>Password
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light">
+                                            <i class="fas fa-lock text-muted"></i>
+                                        </span>
+                                        <input type="password" 
+                                               class="form-control" 
+                                               id="loginPassword" 
+                                               name="password" 
+                                               required 
+                                               placeholder="Enter your password"
+                                               autocomplete="current-password"
+                                               minlength="8">
+                                        <button class="btn btn-outline-secondary" type="button" id="toggleLoginPassword">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    <div class="invalid-feedback">Password is required (minimum 8 characters).</div>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="form-check">
+                                            <input type="checkbox" 
+                                                   class="form-check-input" 
+                                                   id="loginRemember" 
+                                                   name="remember">
+                                            <label class="form-check-label text-muted" for="loginRemember">
+                                                Remember me
+                                            </label>
+                                        </div>
+                                        <button type="button" 
+                                                class="btn btn-link text-decoration-none p-0" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#forgotPasswordModal">
+                                            Forgot Password?
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-grid mb-4">
+                                    <button type="submit" class="btn btn-primary btn-lg py-2 fw-semibold">
+                                        <i class="fas fa-sign-in-alt me-2"></i>Login
+                                    </button>
+                                </div>
+                                
+                                <!-- Divider -->
+                                <div class="text-center my-3">
+                                    <span class="text-muted small">or continue with</span>
+                                </div>
+                                
+                                <!-- Social Login -->
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <button type="button" class="btn btn-outline-danger w-100">
+                                            <i class="fab fa-google me-2"></i>Google
+                                        </button>
+                                    </div>
+                                    <div class="col-6">
+                                        <button type="button" class="btn btn-outline-primary w-100">
+                                            <i class="fab fa-facebook me-2"></i>Facebook
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                            </form>
+                        </div>
+                        
+                        <!-- ==================== REGISTER FORM ==================== -->
+                        <div class="tab-pane fade" id="register" role="tabpanel">
+                            <form action="/auth/register" method="POST" id="registerForm" novalidate>
+                                
+                                <!-- Personal Information -->
+                                <h6 class="text-primary mb-3"><i class="fas fa-user me-2"></i>Personal Information</h6>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="firstName" class="form-label fw-semibold">
+                                            <i class="fas fa-user me-2 text-primary"></i>First Name
+                                        </label>
+                                        <input type="text" 
+                                               class="form-control" 
+                                               id="firstName" 
+                                               name="firstName" 
+                                               required 
+                                               placeholder="John"
+                                               autocomplete="given-name"
+                                               value="<%= typeof firstName !== 'undefined' ? firstName : '' %>">
+                                        <div class="invalid-feedback">First name is required.</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="lastName" class="form-label fw-semibold">
+                                            <i class="fas fa-user me-2 text-primary"></i>Last Name
+                                        </label>
+                                        <input type="text" 
+                                               class="form-control" 
+                                               id="lastName" 
+                                               name="lastName" 
+                                               required 
+                                               placeholder="Doe"
+                                               autocomplete="family-name"
+                                               value="<%= typeof lastName !== 'undefined' ? lastName : '' %>">
+                                        <div class="invalid-feedback">Last name is required.</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="registerEmail" class="form-label fw-semibold">
+                                        <i class="fas fa-envelope me-2 text-primary"></i>Email Address
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light">
+                                            <i class="fas fa-envelope text-muted"></i>
+                                        </span>
+                                        <input type="email" 
+                                               class="form-control" 
+                                               id="registerEmail" 
+                                               name="email" 
+                                               required 
+                                               placeholder="john.doe@example.com"
+                                               autocomplete="email"
+                                               value="<%= typeof email !== 'undefined' ? email : '' %>">
+                                    </div>
+                                    <div class="invalid-feedback">Please enter a valid email address.</div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="phone" class="form-label fw-semibold">
+                                        <i class="fas fa-phone me-2 text-primary"></i>Phone Number
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light">
+                                            <i class="fas fa-phone text-muted"></i>
+                                        </span>
+                                        <input type="tel" 
+                                               class="form-control" 
+                                               id="phone" 
+                                               name="phone" 
+                                               placeholder="+27 12 345 6789"
+                                               autocomplete="tel"
+                                               value="<%= typeof phone !== 'undefined' ? phone : '' %>">
+                                    </div>
+                                </div>
+                                
+                                <!-- Security Information -->
+                                <h6 class="text-primary mb-3"><i class="fas fa-shield-alt me-2"></i>Security Information</h6>
+                                
+                                <div class="mb-3">
+                                    <label for="registerPassword" class="form-label fw-semibold">
+                                        <i class="fas fa-lock me-2 text-primary"></i>Password
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light">
+                                            <i class="fas fa-lock text-muted"></i>
+                                        </span>
+                                        <input type="password" 
+                                               class="form-control" 
+                                               id="registerPassword" 
+                                               name="password" 
+                                               required 
+                                               placeholder="Minimum 8 characters"
+                                               autocomplete="new-password"
+                                               minlength="8">
+                                        <button class="btn btn-outline-secondary" type="button" id="toggleRegisterPassword">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    <!-- Password Strength -->
+                                    <div class="mt-2">
+                                        <div class="progress" style="height: 5px;">
+                                            <div class="progress-bar" id="passwordStrength" role="progressbar" style="width: 0%;"></div>
+                                        </div>
+                                        <small class="text-muted" id="strengthText">Password strength: None</small>
+                                    </div>
+                                    <div class="invalid-feedback">Password is required (minimum 8 characters).</div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="confirmPassword" class="form-label fw-semibold">
+                                        <i class="fas fa-lock me-2 text-primary"></i>Confirm Password
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light">
+                                            <i class="fas fa-lock text-muted"></i>
+                                        </span>
+                                        <input type="password" 
+                                               class="form-control" 
+                                               id="confirmPassword" 
+                                               name="confirmPassword" 
+                                               required 
+                                               placeholder="Re-enter your password"
+                                               autocomplete="new-password">
+                                    </div>
+                                    <div class="invalid-feedback">Passwords do not match.</div>
+                                </div>
+                                
+                                <!-- Account Type -->
+                                <h6 class="text-primary mb-3"><i class="fas fa-user-tag me-2"></i>Account Type</h6>
+                                
+                                <div class="mb-4">
+                                    <label for="role" class="form-label fw-semibold">
+                                        <i class="fas fa-user-tag me-2 text-primary"></i>Select Account Type
+                                    </label>
+                                    <select class="form-select" id="role" name="role">
+                                        <option value="user" selected>Standard User</option>
+                                        <option value="admin">Administrator</option>
+                                    </select>
+                                    <small class="text-muted">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        Standard users can browse and book events. Admin users have management privileges.
+                                    </small>
+                                </div>
+                                
+                                <!-- Terms -->
+                                <div class="mb-4">
+                                    <div class="form-check">
+                                        <input type="checkbox" 
+                                               class="form-check-input" 
+                                               id="terms" 
+                                               name="terms" 
+                                               required>
+                                        <label class="form-check-label text-muted" for="terms">
+                                            I agree to the 
+                                            <a href="/terms" class="text-decoration-none">Terms of Service</a> and 
+                                            <a href="/privacy" class="text-decoration-none">Privacy Policy</a> of 
+                                            <strong>Advanced Events (Pty) Ltd</strong>
+                                        </label>
+                                        <div class="invalid-feedback">You must agree to the terms and conditions.</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-grid mb-3">
+                                    <button type="submit" class="btn btn-primary btn-lg py-2 fw-semibold">
+                                        <i class="fas fa-user-plus me-2"></i>Create Account
+                                    </button>
+                                </div>
+                                
+                            </form>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                
+                <div class="card-footer bg-light text-center py-3 border-0">
+                    <small class="text-muted">
+                        <i class="fas fa-shield-alt me-1"></i>
+                        Secure authentication powered by Advanced Events (Pty) Ltd
+                    </small>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<!-- Forgot Password Modal -->
+<div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="forgotPasswordLabel">
+                    <i class="fas fa-key me-2"></i>Reset Password
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                
+                <% if (typeof forgotError !== 'undefined' && forgotError) { %>
+                    <div class="alert alert-danger alert-dismissible fade show">
+                        <i class="fas fa-exclamation-circle me-2"></i><%= forgotError %>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                <% } %>
+                
+                <% if (typeof forgotSuccess !== 'undefined' && forgotSuccess) { %>
+                    <div class="alert alert-success alert-dismissible fade show">
+                        <i class="fas fa-check-circle me-2"></i><%= forgotSuccess %>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                <% } %>
+                
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Enter your email address and we'll send you a password reset link.
+                </div>
+                
+                <form action="/auth/forgot-password" method="POST" id="forgotForm" novalidate>
+                    <div class="mb-4">
+                        <label for="forgotEmail" class="form-label fw-semibold">
+                            <i class="fas fa-envelope me-2 text-primary"></i>Email Address
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light">
+                                <i class="fas fa-envelope text-muted"></i>
+                            </span>
+                            <input type="email" 
+                                   class="form-control" 
+                                   id="forgotEmail" 
+                                   name="email" 
+                                   required 
+                                   placeholder="Enter your email"
+                                   autocomplete="email">
+                        </div>
+                        <div class="invalid-feedback">Please enter a valid email address.</div>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-paper-plane me-2"></i>Send Reset Link
+                        </button>
+                    </div>
+                </form>
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('./partials/footer') %>
+
+<script>
+    // ==================== PASSWORD VISIBILITY TOGGLE ====================
+    document.getElementById('toggleLoginPassword').addEventListener('click', function() {
+        const passwordInput = document.getElementById('loginPassword');
+        const icon = this.querySelector('i');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    });
+    
+    document.getElementById('toggleRegisterPassword').addEventListener('click', function() {
+        const passwordInput = document.getElementById('registerPassword');
+        const icon = this.querySelector('i');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    });
+    
+    // ==================== PASSWORD STRENGTH INDICATOR ====================
+    const passwordInput = document.getElementById('registerPassword');
+    const strengthBar = document.getElementById('passwordStrength');
+    const strengthText = document.getElementById('strengthText');
+    
+    passwordInput.addEventListener('input', function() {
+        const password = this.value;
+        let strength = 0;
+        let strengthLabel = 'None';
+        
+        if (password.length >= 8) strength++;
+        if (password.length >= 12) strength++;
+        if (password.match(/[a-z]/)) strength++;
+        if (password.match(/[A-Z]/)) strength++;
+        if (password.match(/[0-9]/)) strength++;
+        if (password.match(/[^a-zA-Z0-9]/)) strength++;
+        
+        strengthBar.className = 'progress-bar';
+        
+        if (strength <= 2) {
+            strengthBar.classList.add('bg-danger');
+            strengthBar.style.width = '33%';
+            strengthLabel = 'Weak';
+        } else if (strength <= 4) {
+            strengthBar.classList.add('bg-warning');
+            strengthBar.style.width = '66%';
+            strengthLabel = 'Medium';
+        } else {
+            strengthBar.classList.add('bg-success');
+            strengthBar.style.width = '100%';
+            strengthLabel = 'Strong';
+        }
+        
+        strengthText.textContent = 'Password strength: ' + strengthLabel;
+    });
+    
+    // ==================== LOGIN FORM VALIDATION ====================
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        let isValid = true;
+        const email = document.getElementById('loginEmail');
+        const password = document.getElementById('loginPassword');
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        
+        if (!emailRegex.test(email.value)) {
+            email.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            email.classList.remove('is-invalid');
+            email.classList.add('is-valid');
+        }
+        
+        if (!password.value || password.value.length < 8) {
+            password.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            password.classList.remove('is-invalid');
+            password.classList.add('is-valid');
+        }
+        
+        if (!isValid) e.preventDefault();
+    });
+    
+    // ==================== REGISTER FORM VALIDATION ====================
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+        let isValid = true;
+        const firstName = document.getElementById('firstName');
+        const lastName = document.getElementById('lastName');
+        const email = document.getElementById('registerEmail');
+        const password = document.getElementById('registerPassword');
+        const confirmPassword = document.getElementById('confirmPassword');
+        const terms = document.getElementById('terms');
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        
+        // First name
+        if (!firstName.value.trim()) {
+            firstName.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            firstName.classList.remove('is-invalid');
+            firstName.classList.add('is-valid');
+        }
+        
+        // Last name
+        if (!lastName.value.trim()) {
+            lastName.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            lastName.classList.remove('is-invalid');
+            lastName.classList.add('is-valid');
+        }
+        
+        // Email
+        if (!emailRegex.test(email.value)) {
+            email.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            email.classList.remove('is-invalid');
+            email.classList.add('is-valid');
+        }
+        
+        // Password
+        if (!password.value || password.value.length < 8) {
+            password.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            password.classList.remove('is-invalid');
+            password.classList.add('is-valid');
+        }
+        
+        // Confirm password
+        if (password.value !== confirmPassword.value) {
+            confirmPassword.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            confirmPassword.classList.remove('is-invalid');
+            confirmPassword.classList.add('is-valid');
+        }
+        
+        // Terms
+        if (!terms.checked) {
+            terms.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            terms.classList.remove('is-invalid');
+            terms.classList.add('is-valid');
+        }
+        
+        if (!isValid) {
+            e.preventDefault();
+            alert('Please correct the errors before submitting.');
+        }
+    });
+    
+    // ==================== FORGOT PASSWORD FORM VALIDATION ====================
+    document.getElementById('forgotForm').addEventListener('submit', function(e) {
+        const email = document.getElementById('forgotEmail');
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        
+        if (!emailRegex.test(email.value)) {
+            email.classList.add('is-invalid');
+            e.preventDefault();
+        } else {
+            email.classList.remove('is-invalid');
+            email.classList.add('is-valid');
+        }
+    });
+    
+    // ==================== CLEAR VALIDATION ON INPUT ====================
+    document.querySelectorAll('input, select').forEach(input => {
+        input.addEventListener('input', function() {
+            this.classList.remove('is-invalid', 'is-valid');
+        });
+    });
+</script>
+
+<style>
+    .card {
+        border-radius: 15px;
+        overflow: hidden;
+    }
+    
+    .card-header {
+        border-radius: 0 !important;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #5a6fd6 0%, #6a4190 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    .nav-pills .nav-link {
+        color: #666;
+        border-radius: 0;
+        padding: 1rem;
+    }
+    
+    .nav-pills .nav-link.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+    
+    .input-group-text {
+        border-right: none;
+    }
+    
+    .input-group .form-control {
+        border-left: none;
+    }
+    
+    .input-group .form-control:focus {
+        border-color: #667eea;
+        box-shadow: none;
+    }
+    
+    h6.text-primary {
+        border-bottom: 2px solid #667eea;
+        padding-bottom: 8px;
+        margin-bottom: 15px;
+    }
+    
+    .modal-header {
+        border-radius: 10px 10px 0 0 !important;
+    }
+</style>
   </main>
 
   <%- include('partials/footer') %>
