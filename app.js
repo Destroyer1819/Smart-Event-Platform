@@ -76,3 +76,21 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀  Server running at http://localhost:${PORT}`);
 });
+
+// This is for the auth page
+// New combined route, the auth page has everything combined
+app.get('/auth', (req, res) => {
+    res.render('auth', { 
+        title: 'Authentication', 
+        activePage: 'login',
+        user: req.user || null,
+        error: null,
+        success: null
+    });
+});
+
+// POST routes for form submissions
+app.post('/auth/login', ...);
+app.post('/auth/register', ...);
+app.post('/auth/forgot-password', ...);
+app.get('/auth/logout', ...);
