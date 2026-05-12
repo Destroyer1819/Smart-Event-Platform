@@ -1,18 +1,128 @@
-<%-- NAVBAR PARTIAL — Member 3 (Frontend Developer) --%>
-<%-- TODO: Build responsive navbar with Bootstrap/Tailwind --%>
-<%-- Show Login/Register if not logged in, Dashboard/Logout if logged in --%>
-<%-- Show 'Manage Events' link only if currentUser.role === 'admin' --%>
-<nav>
-  <a href="/events">Home</a>
-  <% if (currentUser) { %>
-    <a href="/bookings/dashboard">Dashboard</a>
-    <% if (currentUser.role === 'admin') { %>
-      <a href="/events/manage">Manage Events</a>
-      <a href="/admin/enquiries">Enquiries</a>
-    <% } %>
-    <a href="/logout">Logout</a>
-  <% } else { %>
-    <a href="/login">Login</a>
-    <a href="/register">Register</a>
-  <% } %>
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top shadow">
+    <div class="container">
+        <!-- Brand/Logo -->
+        <a class="navbar-brand fw-bold" href="/">
+            <i class="fas fa-calendar-check me-2"></i>SmartEvent
+        </a>
+        
+        <!-- Mobile Toggle Button -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <!-- Navigation Links -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <!-- Left Side - Main Links -->
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <!-- Home Link -->
+                <li class="nav-item">
+                    <a class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'home' ? 'active' : '' %>" href="/">
+                        <i class="fas fa-home me-1"></i> Home
+                    </a>
+                </li>
+                
+                <!-- Events Link -->
+                <li class="nav-item">
+                    <a class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'events' ? 'active' : '' %>" href="/events">
+                        <i class="fas fa-ticket-alt me-1"></i> Events
+                    </a>
+                </li>
+                
+                <!-- User Links (Only if logged in) -->
+                <% if (typeof user !== 'undefined' && user) { %>
+                    <li class="nav-item">
+                        <a class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'dashboard' ? 'active' : '' %>" href="/user/dashboard">
+                            <i class="fas fa-tachometer-alt me-1"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'bookings' ? 'active' : '' %>" href="/user/bookings">
+                            <i class="fas fa-list me-1"></i> My Bookings
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'contact' ? 'active' : '' %>" href="/contact">
+                            <i class="fas fa-envelope me-1"></i> Contact
+                        </a>
+                    </li>
+                    
+                    <!-- Admin Dropdown (Only if admin) -->
+                    <% if (user.role === 'admin') { %>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle <%= typeof activePage !== 'undefined' && activePage === 'admin' ? 'active' : '' %>" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-shield me-1"></i> Admin
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                                <li>
+                                    <a class="dropdown-item <%= typeof activePage !== 'undefined' && activePage === 'admin-events' ? 'active' : '' %>" href="/admin/events">
+                                        <i class="fas fa-calendar-alt me-2"></i>Manage Events
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item <%= typeof activePage !== 'undefined' && activePage === 'admin-analytics' ? 'active' : '' %>" href="/admin/analytics">
+                                        <i class="fas fa-chart-bar me-2"></i>Analytics
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item <%= typeof activePage !== 'undefined' && activePage === 'admin-enquiries' ? 'active' : '' %>" href="/admin/enquiries">
+                                        <i class="fas fa-inbox me-2"></i>Enquiries
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item text-danger" href="/admin/settings">
+                                        <i class="fas fa-cog me-2"></i>Settings
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    <% } %>
+                <% } %>
+            </ul>
+            
+            <!-- Right Side - Auth Links -->
+            <ul class="navbar-nav">
+                <% if (typeof user !== 'undefined' && user) { %>
+                    <!-- User Dropdown -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle me-1"></i><%= user.name %>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li>
+                                <a class="dropdown-item" href="/user/profile">
+                                    <i class="fas fa-user me-2"></i>Profile
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="/user/settings">
+                                    <i class="fas fa-cog me-2"></i>Settings
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item text-danger" href="/auth/logout">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                <% } else { %>
+                    <!-- Login Link -->
+                    <li class="nav-item">
+                        <a class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'login' ? 'active' : '' %>" href="/auth/login">
+                            <i class="fas fa-sign-in-alt me-1"></i>Login
+                        </a>
+                    </li>
+                    <!-- Register Link -->
+                    <li class="nav-item">
+                        <a class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'register' ? 'active' : '' %>" href="/auth/register">
+                            <i class="fas fa-user-plus me-1"></i>Register
+                        </a>
+                    </li>
+                <% } %>
+            </ul>
+        </div>
+    </div>
 </nav>
