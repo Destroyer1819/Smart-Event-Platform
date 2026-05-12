@@ -5,5 +5,89 @@
   <h1>Something went wrong</h1>
   <p><%= message %></p>
   <a href="/events">Go Home</a>
+<%- include('./partials/header', { title: 'Error', activePage: 'error', user: user }) %>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="text-center">
+                <!-- Error Icon -->
+                <div class="mb-4">
+                    <i class="fas fa-exclamation-triangle fa-8x text-warning"></i>
+                </div>
+                
+                <!-- Error Type -->
+                <% if (statusCode === 404) { %>
+                    <h1 class="display-1 fw-bold text-danger">404</h1>
+                    <h2 class="mb-3">Page Not Found</h2>
+                    <p class="lead text-muted mb-4">
+                        Oops! The page you're looking for doesn't exist or has been moved.
+                    </p>
+                <% } else if (statusCode === 403) { %>
+                    <h1 class="display-1 fw-bold text-danger">403</h1>
+                    <h2 class="mb-3">Access Denied</h2>
+                    <p class="lead text-muted mb-4">
+                        Sorry, you don't have permission to access this page.
+                    </p>
+                <% } else if (statusCode === 500) { %>
+                    <h1 class="display-1 fw-bold text-danger">500</h1>
+                    <h2 class="mb-3">Server Error</h2>
+                    <p class="lead text-muted mb-4">
+                        Something went wrong on our end. Please try again later.
+                    </p>
+                <% } else { %>
+                    <h1 class="display-1 fw-bold text-danger">Error</h1>
+                    <h2 class="mb-3">Something Went Wrong</h2>
+                    <p class="lead text-muted mb-4">
+                        We encountered an error. Please try again later.
+                    </p>
+                <% } %>
+                
+                <!-- Error Message -->
+                <% if (message) { %>
+                    <div class="alert alert-danger text-start mb-4">
+                        <i class="fas fa-exclamation-circle me-2"></i><%= message %>
+                    </div>
+                <% } %>
+                
+                <!-- Action Buttons -->
+                <div class="d-grid gap-3 d-md-flex justify-content-md-center">
+                    <a href="/" class="btn btn-primary btn-lg px-4">
+                        <i class="fas fa-home me-2"></i>Go to Home
+                    </a>
+                    <a href="/events" class="btn btn-outline-primary btn-lg px-4">
+                        <i class="fas fa-calendar-alt me-2"></i>Browse Events
+                    </a>
+                    <% if (user) { %>
+                        <a href="/user/dashboard" class="btn btn-outline-success btn-lg px-4">
+                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                        </a>
+                    <% } %>
+                    <button onclick="history.back()" class="btn btn-secondary btn-lg px-4">
+                        <i class="fas fa-arrow-left me-2"></i>Go Back
+                    </button>
+                </div>
+                
+                <!-- Contact Support -->
+                <div class="mt-5 pt-4 border-top">
+                    <p class="text-muted mb-2">Still having trouble?</p>
+                    <a href="/contact" class="text-decoration-none">
+                        <i class="fas fa-envelope me-2"></i>Contact Support
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .error-page {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+    }
+</style>
+
+<%- include('./partials/footer') %>
 </body>
 </html>
