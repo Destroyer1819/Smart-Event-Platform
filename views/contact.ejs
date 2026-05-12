@@ -19,9 +19,201 @@
   <% } %>
 
   <main class="container mt-4">
-    <%-- TODO: Member 3 — build the contact page content here --%>
-    <h1><%= title %></h1>
-    <p>Page under construction.</p>
+   <%- include('./partials/header', { title: 'Contact Us', activePage: 'contact', user: user }) %>
+
+<div class="container py-4">
+    
+    <div class="row">
+        <!-- Contact Info -->
+        <div class="col-lg-5 mb-4">
+            <div class="card bg-primary text-white shadow-lg h-100">
+                <div class="card-body p-4">
+                    <h3 class="mb-4"><i class="fas fa-headset me-2"></i>Get In Touch</h3>
+                    <p class="mb-4">Have questions about our events? Advanced Events would love to hear from you!</p>
+                    
+                    <div class="mb-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-white text-primary rounded-circle p-3 me-3">
+                                <i class="fas fa-map-marker-alt fa-lg"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0">Address</h6>
+                                <small>123 Event Street, Sandton, Johannesburg</small>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-white text-primary rounded-circle p-3 me-3">
+                                <i class="fas fa-phone fa-lg"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0">Phone</h6>
+                                <small>+27 11 123 4567</small>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-white text-primary rounded-circle p-3 me-3">
+                                <i class="fas fa-envelope fa-lg"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0">Email</h6>
+                                <small>info@advancedevents.co.za</small>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex align-items-center">
+                            <div class="bg-white text-primary rounded-circle p-3 me-3">
+                                <i class="fas fa-clock fa-lg"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0">Working Hours</h6>
+                                <small>Mon - Fri: 9:00 AM - 6:00 PM</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <a href="#" class="btn btn-light btn-sm"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="btn btn-light btn-sm"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="btn btn-light btn-sm"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="btn btn-light btn-sm"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Contact Form -->
+        <div class="col-lg-7">
+            <div class="card shadow-lg">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="fas fa-paper-plane me-2"></i>Send Us a Message</h5>
+                </div>
+                <div class="card-body p-4">
+                    
+                    <% if (error) { %>
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            <i class="fas fa-exclamation-circle me-2"></i><%= error %>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    <% } %>
+                    
+                    <% if (success) { %>
+                        <div class="alert alert-success alert-dismissible fade show">
+                            <i class="fas fa-check-circle me-2"></i><%= success %>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    <% } %>
+                    
+                    <form action="/contact" method="POST">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="name" class="form-label">Full Name *</label>
+                                <input type="text" class="form-control" id="name" name="name" 
+                                       required value="<%= user ? user.name : '' %>">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">Email Address *</label>
+                                <input type="email" class="form-control" id="email" name="email" 
+                                       required value="<%= user ? user.email : '' %>">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" 
+                                   value="<%= user ? user.phone : '' %>">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">Subject *</label>
+                            <select class="form-select" id="subject" name="subject" required>
+                                <option value="">Select a subject</option>
+                                <option value="booking">Booking Inquiry</option>
+                                <option value="event">Event Information</option>
+                                <option value="support">Technical Support</option>
+                                <option value="partnership">Partnership Opportunity</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Message *</label>
+                            <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-paper-plane me-2"></i>Send Message
+                        </button>
+                    </form>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Admin Enquiries Section -->
+    <% if (user && user.role === 'admin') { %>
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="card shadow">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fas fa-inbox me-2"></i>Recent Enquiries</h5>
+                        <span class="badge bg-primary"><%= enquiries ? enquiries.length : 0 %></span>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Subject</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% if (enquiries && enquiries.length > 0) { %>
+                                        <% enquiries.forEach(function(enquiry) { %>
+                                            <tr>
+                                                <td><strong><%= enquiry.name %></strong></td>
+                                                <td><a href="mailto:<%= enquiry.email %>"><%= enquiry.email %></a></td>
+                                                <td><span class="badge bg-info"><%= enquiry.subject %></span></td>
+                                                <td><%= new Date(enquiry.createdAt).toLocaleDateString('en-ZA') %></td>
+                                                <td>
+                                                    <span class="badge <%= enquiry.status === 'new' ? 'bg-warning' : 'bg-success' %>">
+                                                        <%= enquiry.status %>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-primary">
+                                                        <i class="fas fa-reply me-1"></i>Respond
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        <% }); %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="6" class="text-center py-4">
+                                                <i class="fas fa-inbox fa-2x text-muted mb-2"></i>
+                                                <p class="text-muted mb-0">No enquiries yet</p>
+                                            </td>
+                                        </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <% } %>
+    
+</div>
+
+<%- include('./partials/footer') %>
   </main>
 
   <%- include('partials/footer') %>
