@@ -32,17 +32,17 @@
                 <!-- User Links (Only if logged in) -->
                 <% if (typeof user !== 'undefined' && user) { %>
                     <li class="nav-item">
-                        <a class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'dashboard' ? 'active' : '' %>" href="/user/dashboard">
+                        <a class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'dashboard' ? 'active' : '' %>" href="/bookings/dashboard">
                             <i class="fas fa-tachometer-alt me-1"></i> Dashboard
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'bookings' ? 'active' : '' %>" href="/user/bookings">
+                        <a class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'bookings' ? 'active' : '' %>" href="/bookings/dashboard">
                             <i class="fas fa-list me-1"></i> My Bookings
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'contact' ? 'active' : '' %>" href="/contact">
+                        <a class="nav-link <%= typeof activePage !== 'undefined' && activePage === 'contact' ? 'active' : '' %>" href="/enquiries/contact">
                             <i class="fas fa-envelope me-1"></i> Contact
                         </a>
                     </li>
@@ -55,23 +55,23 @@
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="adminDropdown">
                                 <li>
-                                    <a class="dropdown-item <%= typeof activePage !== 'undefined' && activePage === 'admin-events' ? 'active' : '' %>" href="/admin/events">
+                                    <a class="dropdown-item <%= typeof activePage !== 'undefined' && activePage === 'admin-events' ? 'active' : '' %>" href="/events/manage">
                                         <i class="fas fa-calendar-alt me-2"></i>Manage Events
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item <%= typeof activePage !== 'undefined' && activePage === 'admin-analytics' ? 'active' : '' %>" href="/admin/analytics">
+                                    <a class="dropdown-item <%= typeof activePage !== 'undefined' && activePage === 'admin-analytics' ? 'active' : '' %>" href="/bookings/dashboard">
                                         <i class="fas fa-chart-bar me-2"></i>Analytics
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item <%= typeof activePage !== 'undefined' && activePage === 'admin-enquiries' ? 'active' : '' %>" href="/admin/enquiries">
+                                    <a class="dropdown-item <%= typeof activePage !== 'undefined' && activePage === 'admin-enquiries' ? 'active' : '' %>" href="/enquiries/admin/enquiries">
                                         <i class="fas fa-inbox me-2"></i>Enquiries
                                     </a>
                                 </li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
-                                    <a class="dropdown-item text-danger" href="/admin/settings">
+                                    <a class="dropdown-item text-danger" href="/bookings/dashboard">
                                         <i class="fas fa-cog me-2"></i>Settings
                                     </a>
                                 </li>
@@ -91,12 +91,12 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                             <li>
-                                <a class="dropdown-item" href="/user/profile">
+                                <a class="dropdown-item" href="/bookings/dashboard">
                                     <i class="fas fa-user me-2"></i>Profile
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="/user/settings">
+                                <a class="dropdown-item" href="/bookings/dashboard">
                                     <i class="fas fa-cog me-2"></i>Settings
                                 </a>
                             </li>

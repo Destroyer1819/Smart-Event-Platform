@@ -4,6 +4,8 @@
 // ============================================================
 require('dotenv').config();
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+
 console.log("Your URI is:", process.env.MONGO_URI)
 
 // TODO: Import models once schemas are defined
@@ -11,6 +13,7 @@ const Event = require('./models/Event');
 const User = require('./models/User');
 const Booking = require('./models/Booking');
 const Enquiry = require('./models/Enquiry');
+
 
 mongoose.connect(process.env.MONGO_URI)
   .then(async () => {
@@ -24,14 +27,14 @@ mongoose.connect(process.env.MONGO_URI)
     const admin1 = await User.create({
       name: "Justin Shaw",
       email: "admin@clinic1.com",
-      password: "securepassword123",
+      password: await bcrypt.hash("securepassword123", 12),
       role: "admin"
     });
 
     const user1 = await User.create({
       name: "John Doe",
       email: "john@gmail.com",
-      password: "password123",
+      password: await bcrypt.hash("password123", 12),
       role: "user"
     });
 

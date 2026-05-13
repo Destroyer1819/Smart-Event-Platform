@@ -15,9 +15,11 @@ exports.getRegister = (req, res) => {
 exports.postRegister = async (req, res, next) => {
   // TODO: Hash password with bcrypt, save user, redirect to login
   try{
-    const { name, email, password, confirmPassword, role } = req.body;
+    const { firstName, lastName, name, email, password, confirmPassword, role } = req.body;
 
-    if (!name || !email || !password) {
+    const fullName = name || `${firstName || ''} ${lastName || ''}`.trim();
+
+    if (!fullName || !email || !password) {
       req.flash('error', 'Please complete all required fields.');
       return res.redirect('/auth/register');
     }
@@ -36,13 +38,13 @@ exports.postRegister = async (req, res, next) => {
     const hashedpassword = await bcrypt.hash(password, 12);
 
     const safeRole = 
-    req.session.user?.role === 'admin' && 
+    req.session?.user?.role === 'admin' && 
     ['user', 'organizer', 'admin'].includes(role)
     ? role
     : 'user';
 
     await User.create({
-      name: name.trim(),
+      name: fullName.trim(),
       email: email.toLowerCase().trim(),
       password: hashedpassword,
       role: safeRole

@@ -25,10 +25,37 @@ exports.getDashboard = async (req, res, next) => {
       events = await Event.find().sort({ date: 1 });
     }
 
+    bookings = bookings.filter(booking => booking.event);
+
+    const totalBookings = bookings.length;
+    const upcomingBookings = bookings.filter(booking =>
+      booking.event &&
+      new Date(booking.event.date) > new Date()
+    ).length;
+
+    const totalSpent = bookings.reduce((sum, booking) => {
+      if (booking.event && booking.event.price) {
+        return sum + booking.event.price;
+      }
+      return sum;
+    }, 0);
+
+    const favoriteEvents = bookings.length;
+
+    const upcomingEvents = events.filter(event =>
+      new Date(event.date) > new Date()
+    );
+
+
     res.render('dashboard', {
       title: 'Dashboard',
-      bookings, 
-      events
+      bookings,
+      events,
+      totalBookings,
+      upcomingBookings,
+      totalSpent,
+      favoriteEvents,
+      upcomingEvents
     });
 
   } catch (error) {
@@ -39,7 +66,9 @@ exports.getDashboard = async (req, res, next) => {
 exports.bookTicket = async (req, res, next) => {
   // TODO: Check event capacity, create booking, decrement event capacity
   try {
-    const eventId = req.params.eventId || req.params.id || req.body.eventId;    const userId = req.session.user.id; 
+    const eventId = req.params.eventId || req.params.id || req.body.eventId;
+    const userId = req.session.user.id;
+
     const event = await Event.findById(eventId);
 
     if (!event) {
@@ -47,7 +76,7 @@ exports.bookTicket = async (req, res, next) => {
       return res.redirect('/bookings/dashboard');
     }
 
-    if (event.capacity <= 0) {
+    if (event.availableCapacity <= 0) {
       req.flash('error', 'This event is fully booked.');
       return res.redirect('/bookings/dashboard');
     }
@@ -65,10 +94,13 @@ exports.bookTicket = async (req, res, next) => {
     await Booking.create({
       user: userId,
       event: eventId,
+      ticketsBooked: 1,
+      totalPrice: event.price,
+      status: 'Confirmed',
       bookingDate: new Date()
     });
 
-    event.capacity -= 1;
+    event.availableCapacity -= 1;
     await event.save();
 
     req.flash('success', 'Ticket booked successfully.');
@@ -96,7 +128,7 @@ exports.cancelBooking = async (req, res, next) => {
     }
 
     await Event.findByIdAndUpdate(booking.event, {
-      $inc: { capacity: 1 }
+      $inc: { availableCapacity: 1 }
     });
 
     await Booking.findByIdAndDelete(bookingId);

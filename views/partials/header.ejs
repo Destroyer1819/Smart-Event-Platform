@@ -15,8 +15,8 @@
 <body>
     
     <!-- Include Navigation -->
-    <%- include('./nav', { user: user, activePage: typeof activePage !== 'undefined' ? activePage : 'home' }) %>
-    
+    <%- include('./navbar', { user: user, activePage: typeof activePage !== 'undefined' ? activePage : 'home' }) %>
+        
     <!-- Flash Messages -->
     <% if (typeof success !== 'undefined' && success) { %>
         <div class="container mt-3">

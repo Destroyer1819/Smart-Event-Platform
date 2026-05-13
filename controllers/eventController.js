@@ -3,107 +3,140 @@
 // ============================================================
 const Event = require('../models/Event');
 
+function getEventStats(events) {
+  return {
+    totalEvents: events.length,
+    availableEvents: events.filter(event => event.availableCapacity > 0).length,
+    limitedEvents: events.filter(event => event.availableCapacity > 0 && event.availableCapacity <= 5).length,
+    soldOutEvents: events.filter(event => event.availableCapacity <= 0).length
+  };
+}
+
 exports.getAllEvents = async (req, res, next) => {
-  // TODO: Fetch events, support search/filter query params (date, category, availability)
   try {
-    const {search, category, date} = req.query;
+    const { search, category, dateFrom, dateTo, sortBy } = req.query;
 
     let filter = {};
 
     if (search) {
       filter.$or = [
-        {title: {$regex: search, $options: 'i'}}, 
-        {description: {$regex: search, $options: 'i'}},
-        {venue: {$regex: search, $options: 'i'}}
+        { title: { $regex: search, $options: 'i' } },
+        { description: { $regex: search, $options: 'i' } },
+        { location: { $regex: search, $options: 'i' } }
       ];
     }
 
-    if (category && category !== 'all'){
+    if (category && category !== 'all') {
       filter.category = category;
     }
 
-    if (date) {
-      const start = new Date(date);
-      const end = new Date(date);
+    if (dateFrom || dateTo) {
+      filter.date = {};
 
-      end.setHours(23,59,59,999);
+      if (dateFrom) {
+        filter.date.$gte = new Date(dateFrom);
+      }
 
-      filter.date = {
-        $gte: start,
-        $lte: end
-      };
+      if (dateTo) {
+        const end = new Date(dateTo);
+        end.setHours(23, 59, 59, 999);
+        filter.date.$lte = end;
+      }
     }
 
-    const events = await Event.find(filter).sort({date: 1});
-    res.render('events/index', {
+    let sortOption = { date: 1 };
+
+    if (sortBy === 'date_desc') sortOption = { date: -1 };
+    if (sortBy === 'price_asc') sortOption = { price: 1 };
+    if (sortBy === 'price_desc') sortOption = { price: -1 };
+
+    const events = await Event.find(filter).sort(sortOption);
+    const stats = getEventStats(events);
+
+    res.render('events', {
       title: 'All Events',
-      events, 
-      filters: {
-        search: search || '',
-        category: category || '',
-        date: date || ''
-      }
-    })
+      events,
+      ...stats,
+      searchQuery: search || '',
+      category: category || '',
+      dateFrom: dateFrom || '',
+      dateTo: dateTo || '',
+      sortBy: sortBy || 'date_asc',
+      currentPage: 1,
+      totalPages: 1
+    });
 
   } catch (error) {
     next(error);
   }
 };
 
-
 exports.getManagePage = async (req, res, next) => {
-  // TODO: Fetch all events for admin management view
   try {
-    const events = await Event.find().sort({createdAt: -1});
+    const events = await Event.find().sort({ createdAt: -1 });
+    const stats = getEventStats(events);
 
-    res.render('events/manage', {
+    res.render('events', {
       title: 'Manage Events',
-      events
+      events,
+      ...stats,
+      searchQuery: '',
+      category: '',
+      dateFrom: '',
+      dateTo: '',
+      sortBy: 'date_asc',
+      currentPage: 1,
+      totalPages: 1
     });
+
   } catch (error) {
     next(error);
   }
 };
 
 exports.createEvent = async (req, res, next) => {
-  // TODO: Create new event from req.body, redirect to manage page
   try {
-    const{
+    const {
       title,
       description,
       category,
+      location,
       venue,
       date,
       price,
+      totalCapacity,
       capacity,
+      imageUrl,
       image
     } = req.body;
+
+    const finalCapacity = Number(totalCapacity || capacity);
 
     await Event.create({
       title,
       description,
       category,
-      venue,
+      location: location || venue,
       date,
-      price,
-      capacity,
-      image
+      price: Number(price),
+      totalCapacity: finalCapacity,
+      availableCapacity: finalCapacity,
+      imageUrl: imageUrl || image || '#cccccc'
     });
 
     req.flash('success', 'Event created successfully.');
     res.redirect('/events/manage');
-  
+
   } catch (error) {
     next(error);
   }
 };
 
 exports.getEditEvent = async (req, res, next) => {
-  // TODO: Find event by id, render edit form
   try {
     const event = await Event.findById(req.params.id);
 
-    if (!event){
+    if (!event) {
       req.flash('error', 'Event not found.');
       return res.redirect('/events/manage');
     }
@@ -116,49 +149,61 @@ exports.getEditEvent = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-
 };
 
 exports.updateEvent = async (req, res, next) => {
-  // TODO: Find by id, update fields, redirect
   try {
-    const{
+    const {
       title,
       description,
       category,
+      location,
       venue,
       date,
       price,
+      totalCapacity,
       capacity,
+      imageUrl,
       image
     } = req.body;
 
-    await Event.findByIdAndUpdate(req.params.id, {
-      title,
-      description,
-      category,
-      venue,
-      date,
-      price,
-      capacity,
-      image
-    });
+    const finalCapacity = Number(totalCapacity || capacity);
 
-    req.flash('success', 'Event updated successfully.')
-    res.redirect('/events/manage')
+    const updatedEvent = await Event.findByIdAndUpdate(
+      req.params.id,
+      {
+        title,
+        description,
+        category,
+        location: location || venue,
+        date,
+        price: Number(price),
+        totalCapacity: finalCapacity,
+        imageUrl: imageUrl || image || '#cccccc'
+      },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedEvent) {
+      req.flash('error', 'Event not found.');
+      return res.redirect('/events/manage');
+    }
+
+    req.flash('success', 'Event updated successfully.');
+    res.redirect('/events/manage');
+
   } catch (error) {
     next(error);
   }
 };
 
 exports.deleteEvent = async (req, res, next) => {
-  // TODO: Find by id, delete, redirect
   try {
     await Event.findByIdAndDelete(req.params.id);
 
     req.flash('success', 'Event deleted successfully.');
-
     res.redirect('/events/manage');
+
   } catch (error) {
     next(error);
   }

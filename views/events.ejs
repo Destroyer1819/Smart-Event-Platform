@@ -10,7 +10,7 @@
 <body>
   <%- include('partials/navbar') %>
 
-  <%-- Flash Messages --%>
+  <!-- Flash Messages -->
   <% if (success.length > 0) { %>
     <div class="alert alert-success"><%= success %></div>
   <% } %>
@@ -49,10 +49,11 @@
                     <label for="category" class="form-label">Category</label>
                     <select class="form-select" id="category" name="category">
                         <option value="">All Categories</option>
-                        <option value="conference" <%= category === 'conference' ? 'selected' : '' %>>Conference</option>
-                        <option value="workshop" <%= category === 'workshop' ? 'selected' : '' %>>Workshop</option>
-                        <option value="festival" <%= category === 'festival' ? 'selected' : '' %>>Festival</option>
-                        <option value="private" <%= category === 'private' ? 'selected' : '' %>>Private Event</option>
+                        <option value="Conference" <%= category === 'Conference' ? 'selected' : '' %>>Conference</option>
+                        <option value="Workshop" <%= category === 'Workshop' ? 'selected' : '' %>>Workshop</option>
+                        <option value="Music" <%= category === 'Music' ? 'selected' : '' %>>Music</option>
+                        <option value="Sport" <%= category === 'Sport' ? 'selected' : '' %>>Sport</option>
+                        <option value="Other" <%= category === 'Other' ? 'selected' : '' %>>Other</option>
                     </select>
                 </div>
                 <div class="col-md-2">
@@ -139,9 +140,10 @@
     <% if (events && events.length > 0) { %>
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             <% events.forEach(function(event) { 
-                const capacityPercent = (event.booked / event.capacity) * 100;
-                const isAvailable = event.booked < event.capacity;
-                const seatsLeft = event.capacity - event.booked;
+                const bookedSeats = event.totalCapacity - event.availableCapacity;
+                const capacityPercent = (bookedSeats / event.totalCapacity) * 100;
+                const isAvailable = event.availableCapacity > 0;
+                const seatsLeft = event.availableCapacity;
                 const isLimited = seatsLeft <= 5 && seatsLeft > 0;
                 const isSoldOut = seatsLeft <= 0;
                 const eventDate = new Date(event.date);
@@ -176,7 +178,7 @@
                             </div>
                             <div class="mb-2">
                                 <i class="fas fa-clock text-primary me-2"></i>
-                                <span><%= event.startTime %> - <%= event.endTime %></span>
+                                <span><%= eventDate.toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit' }) %></span>
                             </div>
                             <div class="mb-2">
                                 <i class="fas fa-map-marker-alt text-primary me-2"></i>
@@ -192,7 +194,7 @@
                                 <div class="mt-3">
                                     <div class="d-flex justify-content-between small text-muted">
                                         <span><%= seatsLeft %> seats left</span>
-                                        <span><%= event.booked %>/<%= event.capacity %></span>
+                                        <span><%= bookedSeats %>/<%= event.totalCapacity %></span>
                                     </div>
                                     <div class="progress" style="height: 8px;">
                                         <div class="progress-bar <%= isLimited ? 'bg-warning' : 'bg-success' %>" role="progressbar" 
@@ -204,7 +206,7 @@
                         </div>
                         <div class="card-footer bg-white border-top-0">
                             <% if (isAvailable && user) { %>
-                                <a href="/user/bookings/<%= event._id %>" class="btn btn-primary w-100">
+                                <a href="/bookings/book/<%= event._id %>" class="btn btn-primary w-100">
                                     <i class="fas fa-ticket-alt me-2"></i>Book Now
                                 </a>
                             <% } else if (isAvailable && !user) { %>
@@ -282,8 +284,7 @@
     }
 </style>
   </main>
-
-  <%- include('partials/footer') %>
+  
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

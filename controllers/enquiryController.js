@@ -3,8 +3,22 @@
 // ============================================================
 const Enquiry = require('../models/Enquiry');
 
-exports.getContactPage = (req, res) => {
-  res.render('contact', { title: 'Contact Us' });
+exports.getContactPage = async (req, res, next) => {
+  try {
+    let enquiries = [];
+
+    if (req.session.user && req.session.user.role === 'admin') {
+      enquiries = await Enquiry.find().sort({ createdAt: -1 });
+    }
+
+    res.render('contact', {
+      title: 'Contact Us',
+      enquiries
+    });
+
+  } catch (error) {
+    next(error);
+  }
 };
 
 exports.submitEnquiry = async (req, res, next) => {
@@ -20,7 +34,7 @@ exports.submitEnquiry = async (req, res, next) => {
     })
 
     req.flash('success', 'Your enquiry has been submitted successfully');
-    res.redirect('/contact');
+    res.redirect('/enquiries/contact');
 
   } catch (error) {
     next(error);

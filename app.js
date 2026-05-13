@@ -12,10 +12,10 @@ const connectDB = require('./config/db.js');
 
 connectDB();
 
-// const Event = require('./models/Event');
-// const User = require('./models/User');
-// const Booking = require('./models/Booking');
-// const Enquiry = require('./models/Enquiry');
+const Event = require('./models/Event');
+const User = require('./models/User');
+const Booking = require('./models/Booking');
+const Enquiry = require('./models/Enquiry');
 
 
 // mongoose.connect(process.env.MONGO_URI)
@@ -61,11 +61,28 @@ const eventRoutes    = require('./routes/eventRoutes');
 const bookingRoutes  = require('./routes/bookingRoutes');
 const enquiryRoutes  = require('./routes/enquiryRoutes');
 
-app.use('/', authRoutes);
+app.get('/', async (req, res, next) => {
+  try {
+    const events = await Event.find().sort({ date: 1 });
+
+    res.render('home', {
+      title: 'Home',
+      events,
+      searchQuery: '',
+      category: '',
+      dateQuery: '',
+      availability: ''
+    });
+
+  } catch (error) {
+    next(error);
+  }
+});
+
+// app.use('/', authRoutes);
 app.use('/auth', authRoutes); // ADDED THIS LINE
 app.use('/events', eventRoutes);
 app.use('/bookings', bookingRoutes);
-app.use('/', enquiryRoutes); // ADDED THIS LINE
 app.use('/enquiries', enquiryRoutes);
 
 // ─── 404 Handler ──────────────────────────────────────────────────────────────
