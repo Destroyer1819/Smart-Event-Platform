@@ -23,11 +23,11 @@ A full-stack web application for managing events, ticket bookings, and customer 
 
 | Member | Name | Role |
 |--------|------|------|
-| 1 | Xander | Team Lead / Project Coordinator |
+| 1 | Xander Oosthuyzen | Team Lead / Project Coordinator |
 | 2 | Masilo Pudikabekwa | Backend Developer |
-| 3 | Nompilo M | Frontend Developer |
-| 4 | Justin | Database Engineer |
-| 5 | Darius | Security / DevOps Engineer |
+| 3 | Nompilo Mbense | Frontend Developer |
+| 4 | Justin Shaw | Database Engineer |
+| 5 | Darius Mushi | Security / DevOps Engineer |
 
 ---
 
