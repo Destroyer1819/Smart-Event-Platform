@@ -68,6 +68,20 @@
                                     </a>
                                 </div>
                             <% } %>
+
+                            <!-- Delete event button -->
+                            <form action="/events/delete/<%= event._id %>?_method=DELETE"
+                                method="POST"
+                                class="mt-2">
+                          
+                              <button type="submit"
+                                      class="btn btn-danger w-100"
+                                      onclick="return confirm('Delete this event?')">
+                          
+                                  <i class="fas fa-trash"></i>
+                                  Delete Event
+                              </button>
+                          </form>
                             
                         </div>
                     </div>
