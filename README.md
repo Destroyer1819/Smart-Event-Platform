@@ -27,7 +27,7 @@ A full-stack web application for managing events, ticket bookings, and customer 
 | 2 | Masilo Pudikabekwa | Backend Developer |
 | 3 | Nompilo M | Frontend Developer |
 | 4 | Justin | Database Engineer |
-| 5 | Rich.com | Security / DevOps Engineer |
+| 5 | Darius | Security / DevOps Engineer |
 
 ---
 
