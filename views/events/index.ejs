@@ -45,6 +45,15 @@
     </div>
 </section>
 
+<% if (typeof user !== 'undefined' && user && user.role === 'admin') { %>
+    <div class="mb-4 text-end">
+      <a href="/events/create" class="btn btn-success">
+        <i class="fas fa-plus-circle me-1"></i>
+        Add New Event
+      </a>
+    </div>
+  <% } %>
+
 <!-- Events Grid -->
 <section class="container mb-5">
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
@@ -55,36 +64,41 @@
                         <div class="card-header bg-primary text-white text-center py-4">
                             <i class="fas fa-calendar-alt fa-3x"></i>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body text-dark">
                             <h5 class="card-title"><%= event.title %></h5>
                             <p class="card-text"><%= event.description %></p>
                             <h4 class="text-primary">R <%= event.price %></h4>
-
-                            <!-- Edit event button -->
-                            <% if (typeof user !== 'undefined' && user && user.role === 'admin') { %>
-                                <div class="card-footer bg-white">
-                                    <a href="/events/edit/<%= event._id %>" class="btn btn-warning w-100">
-                                        <i class="fas fa-edit me-1"></i> Edit Event
-                                    </a>
-                                </div>
-                            <% } %>
-
-                            <!-- Delete event button -->
-                            <form action="/events/delete/<%= event._id %>?_method=DELETE"
-                                method="POST"
-                                class="mt-2">
-                          
-                              <button type="submit"
-                                      class="btn btn-danger w-100"
-                                      onclick="return confirm('Delete this event?')">
-                          
-                                  <i class="fas fa-trash"></i>
-                                  Delete Event
-                              </button>
-                          </form>
-                            
                         </div>
-                    </div>
+                        
+                        <% if (typeof user !== 'undefined' && user && user.role === 'admin') { %>
+                        
+                            <div class="card-footer bg-white">
+                                <!-- Edit button -->
+                                <a href="/events/edit/<%= event._id %>"
+                                   class="btn btn-warning w-100 mb-2">
+                        
+                                    <i class="fas fa-edit me-1"></i>
+                                    Edit Event
+                                </a>
+                        
+                                <!-- Delete button -->
+                                <form action="/events/delete/<%= event._id %>?_method=DELETE"
+                                      method="POST">
+                        
+                                    <button type="submit"
+                                            class="btn btn-danger w-100"
+                                            onclick="return confirm('Delete this event?')">
+                        
+                                        <i class="fas fa-trash me-1"></i>
+                                        Delete Event
+                                    </button>
+                        
+                                </form>
+                        
+                            </div>
+                        
+                        <% } %>
+                    </div>  
                 </div>
             <% }); %>
         <% } else { %>
@@ -93,6 +107,7 @@
                 <a href="/events" class="btn btn-primary">Clear Filters</a>
             </div>
         <% } %>
+    </div>
 </section>
 
 <%- include('../partials/footer') %>
