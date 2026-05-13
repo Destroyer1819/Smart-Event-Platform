@@ -1,2 +1,28 @@
-node_modules
+# ============================================================
+# .gitignore — Member 5 (Security / DevOps)
+# ============================================================
+# Keeps secrets and generated files out of the repository.
+# ============================================================
+
+# --- Dependencies ---
+node_modules/
+
+# --- Environment variables (NEVER commit the real .env) ---
 .env
+
+# --- OS / editor noise ---
+.DS_Store
+Thumbs.db
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# --- Logs ---
+*.log
+npm-debug.log*
+
+# --- Runtime data ---
+pids/
+*.pid

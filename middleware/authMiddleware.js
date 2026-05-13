@@ -2,24 +2,21 @@
 // AUTH & ROLE MIDDLEWARE — Member 5 (Security/DevOps)
 // ============================================================
 
-// Protect routes that require login
+// Blocks unauthenticated users from accessing protected routes
 exports.isAuthenticated = (req, res, next) => {
-  // TODO: Check req.session.user exists, else redirect to /login with flash error
   if (req.session && req.session.user) {
     return next();
   }
-
-  req.flash('error', 'Please log in to continue.');
-  return res.redirect('/auth/login');
+  req.session.returnTo = req.originalUrl;
+  req.flash('error', 'You must be logged in to access that page.');
+  res.redirect('/auth/login');
 };
-
-// Protect routes that require admin role
+ 
+// Restricts access to admin-only routes
 exports.isAdmin = (req, res, next) => {
-  // TODO: Check req.session.user.role === 'admin', else redirect with 403 flash
-  if (req.session && req.session.user && req.session.user.role === 'admin') {
+  if (req.session.user && req.session.user.role === 'admin') {
     return next();
   }
-
-  req.flash('error', 'Access denied.');
-  return res.redirect('/bookings/dashboard');
+  req.flash('error', 'Access denied. Admin privileges are required.');
+  res.redirect('/events');
 };
