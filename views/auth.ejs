@@ -8,18 +8,9 @@
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <%- include('partials/navbar') %>
-
-  <!-- Flash Messages -->
-  <% if (success.length > 0) { %>
-    <div class="alert alert-success"><%= success %></div>
-  <% } %>
-  <% if (error.length > 0) { %>
-    <div class="alert alert-danger"><%= error %></div>
-  <% } %>
-
-  <main class="container mt-4">
     <%- include('./partials/header', { title: 'Authentication', activePage: 'login', user: user }) %>
+    
+  <main class="container mt-4">
 
 <div class="container py-5">
     <div class="row justify-content-center">

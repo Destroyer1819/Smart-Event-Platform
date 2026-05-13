@@ -8,30 +8,21 @@
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <%- include('partials/navbar') %>
-
-<!-- Flash Messages -->
-  <% if (success.length > 0) { %>
-    <div class="alert alert-success"><%= success %></div>
-  <% } %>
-  <% if (error.length > 0) { %>
-    <div class="alert alert-danger"><%= error %></div>
-  <% } %>
+    <%- include('./partials/header', { title: 'Dashboard', activePage: 'dashboard', user: user }) %>
 
   <main class="container mt-4">
-  <%- include('./partials/header', { title: 'Dashboard', activePage: 'dashboard', user: user }) %>
 
 <div class="container py-4">
     
     <!-- Welcome Header -->
-    <div class="bg-gradient text-white p-4 rounded-3 mb-4 shadow" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    <div class="bg-white text-dark p-4 rounded-3 mb-4 shadow">
         <div class="d-flex justify-content-between align-items-center">
             <div>
                 <h2 class="mb-2"><i class="fas fa-user-circle me-2"></i>Welcome back, <%= user.name %>!</h2>
                 <p class="mb-0">Manage your bookings with Advanced Events (Pty) Ltd</p>
             </div>
             <div class="text-end d-none d-md-block">
-                <small class="text-white opacity-75">
+                <small class="text-secondary">
                     <i class="fas fa-calendar me-1"></i><%= new Date().toLocaleDateString('en-ZA', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) %>
                 </small>
             </div>

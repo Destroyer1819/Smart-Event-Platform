@@ -6,7 +6,7 @@ const { isAuthenticated } = require('../middleware/authMiddleware');
 router.get('/dashboard', isAuthenticated, bookingController.getDashboard);
 router.post('/book/:eventId', isAuthenticated, bookingController.bookTicket);
 
-router.get('/book/:eventId', isAuthenticated, bookingController.bookTicket); //ADDED this line WHY: some buttons/links may open /book/:eventId using GET, not POST.
+//ADDED this line WHY: some buttons/links may open /book/:eventId using GET, not POST.
 
 router.delete('/cancel/:bookingId', isAuthenticated, bookingController.cancelBooking);
 

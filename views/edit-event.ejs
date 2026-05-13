@@ -1,0 +1,54 @@
+<%- include('./partials/header', { title: 'Edit Event', activePage: 'events', user: user }) %>
+
+<div class="container mt-5">
+    <h2>Edit Event</h2>
+
+    <form action="/events/edit/<%= event._id %>?_method=PUT" method="POST">
+        <div class="mb-3">
+            <label class="form-label">Title</label>
+            <input type="text" name="title" class="form-control" value="<%= event.title %>" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea name="description" class="form-control" required><%= event.description %></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Category</label>
+            <select name="category" class="form-select" required>
+                <option value="Music" <%= event.category === 'Music' ? 'selected' : '' %>>Music</option>
+                <option value="Workshop" <%= event.category === 'Workshop' ? 'selected' : '' %>>Workshop</option>
+                <option value="Conference" <%= event.category === 'Conference' ? 'selected' : '' %>>Conference</option>
+                <option value="Sport" <%= event.category === 'Sport' ? 'selected' : '' %>>Sport</option>
+                <option value="Other" <%= event.category === 'Other' ? 'selected' : '' %>>Other</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Location</label>
+            <input type="text" name="location" class="form-control" value="<%= event.location %>" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Date</label>
+            <input type="datetime-local" name="date" class="form-control"
+                value="<%= new Date(event.date).toISOString().slice(0,16) %>" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Price</label>
+            <input type="number" name="price" class="form-control" value="<%= event.price %>" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Total Capacity</label>
+            <input type="number" name="totalCapacity" class="form-control" value="<%= event.totalCapacity %>" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Update Event</button>
+        <a href="/events/manage" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
+<%- include('./partials/footer') %>

@@ -32,9 +32,6 @@ app.use(express.json());
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(express.static(__dirname)); //Added Code for error fix---------------------
-
-
 app.use(session({
   secret: process.env.SESSION_SECRET || 'fallback_secret',
   resave: false,
@@ -63,15 +60,50 @@ const enquiryRoutes  = require('./routes/enquiryRoutes');
 
 app.get('/', async (req, res, next) => {
   try {
-    const events = await Event.find().sort({ date: 1 });
+    const { search, category, date, availability } = req.query;
+
+    let filter = {};
+
+    if (search) {
+      filter.$or = [
+        { title: { $regex: search, $options: 'i' } },
+        { description: { $regex: search, $options: 'i' } },
+        { location: { $regex: search, $options: 'i' } }
+      ];
+    }
+
+    if (category) {
+      filter.category = category;
+    }
+
+    if (date) {
+      const selectedDate = new Date(date);
+      const nextDay = new Date(date);
+      nextDay.setDate(nextDay.getDate() + 1);
+
+      filter.date = {
+        $gte: selectedDate,
+        $lt: nextDay
+      };
+    }
+
+    if (availability === 'available') {
+      filter.availableCapacity = { $gt: 0 };
+    }
+
+    if (availability === 'limited') {
+      filter.availableCapacity = { $gt: 0, $lte: 5 };
+    }
+
+    const events = await Event.find(filter).sort({ date: 1 });
 
     res.render('home', {
       title: 'Home',
       events,
-      searchQuery: '',
-      category: '',
-      dateQuery: '',
-      availability: ''
+      searchQuery: search || '',
+      category: category || '',
+      dateQuery: date || '',
+      availability: availability || ''
     });
 
   } catch (error) {

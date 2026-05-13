@@ -8,17 +8,9 @@
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <%- include('partials/navbar') %>
-
-  <% if (success.length > 0) { %>
-    <div class="alert alert-success"><%= success %></div>
-  <% } %>
-  <% if (error.length > 0) { %>
-    <div class="alert alert-danger"><%= error %></div>
-  <% } %>
+    <%- include('./partials/header', { title: 'Contact Us', activePage: 'contact', user: user }) %>
 
   <main class="container mt-4">
-   <%- include('./partials/header', { title: 'Contact Us', activePage: 'contact', user: user }) %>
 
 <div class="container py-4">
     

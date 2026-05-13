@@ -1,7 +1,7 @@
 <%- include('./partials/header', { title: 'Home', activePage: 'home', user: user }) %>
 
 <!-- Hero Section -->
-<section class="bg-gradient text-white py-5 mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+<section class="bg-gradient text-dark py-5 mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
     <div class="container text-center">
         <h1 class="display-4 fw-bold mb-3"><i class="fas fa-calendar-alt me-3"></i>Welcome to Advanced Events</h1>
         <p class="lead mb-4">Your premier destination for corporate conferences, workshops, music festivals, and private events</p>
@@ -110,7 +110,11 @@
                         </div>
                         <div class="card-footer bg-white border-top-0">
                             <% if (isAvailable && user) { %>
-                                <a href="/bookings/book/<%= event._id %>" class="btn btn-primary w-100">                                    <i class="fas fa-ticket-alt me-2"></i>Book Now
+                                <form action="/bookings/book/<%= event._id %>" method="POST">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fas fa-ticket-alt me-2"></i>Book Now
+                                    </button>
+                                </form>                                    <i class="fas fa-ticket-alt me-2"></i>Book Now
                                 </a>
                             <% } else if (isAvailable && !user) { %>
                                 <a href="/auth/login" class="btn btn-outline-primary w-100">

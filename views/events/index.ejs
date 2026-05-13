@@ -1,7 +1,7 @@
 <%- include('../partials/header', { title: 'Events', activePage: 'events', user: typeof user !== 'undefined' ? user : null }) %>
 
 <!-- Page Header -->
-<section class="bg-gradient text-white py-5 mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+<section class="bg-gradient text-dark py-5 mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
     <div class="container">
         <h1 class="display-5 fw-bold mb-3"><i class="fas fa-calendar-alt me-3"></i>All Events</h1>
         <p class="lead mb-0">Browse all upcoming events by Advanced Events (Pty) Ltd</p>
@@ -14,7 +14,7 @@
         <div class="card-header bg-primary text-white">
             <h5 class="mb-0"><i class="fas fa-filter me-2"></i>Filter Events</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body text-dark">
             <form action="/events" method="GET" class="row g-3">
                 <div class="col-md-3">
                     <label for="search" class="form-label">Search Events</label>
@@ -28,8 +28,11 @@
                     <label for="category" class="form-label">Category</label>
                     <select class="form-select" id="category" name="category">
                         <option value="">All Categories</option>
-                        <option value="conference">Conference</option>
-                        <option value="workshop">Workshop</option>
+                        <option value="Conference" <%= category === 'Conference' ? 'selected' : '' %>>Conference</option>
+                        <option value="Workshop" <%= category === 'Workshop' ? 'selected' : '' %>>Workshop</option>
+                        <option value="Music" <%= category === 'Music' ? 'selected' : '' %>>Music</option>
+                        <option value="Sport" <%= category === 'Sport' ? 'selected' : '' %>>Sport</option>
+                        <option value="Other" <%= category === 'Other' ? 'selected' : '' %>>Other</option>
                     </select>
                 </div>
                 <div class="col-md-1 d-flex align-items-end">
@@ -56,6 +59,16 @@
                             <h5 class="card-title"><%= event.title %></h5>
                             <p class="card-text"><%= event.description %></p>
                             <h4 class="text-primary">R <%= event.price %></h4>
+
+                            <!-- Edit event button -->
+                            <% if (typeof user !== 'undefined' && user && user.role === 'admin') { %>
+                                <div class="card-footer bg-white">
+                                    <a href="/events/edit/<%= event._id %>" class="btn btn-warning w-100">
+                                        <i class="fas fa-edit me-1"></i> Edit Event
+                                    </a>
+                                </div>
+                            <% } %>
+                            
                         </div>
                     </div>
                 </div>

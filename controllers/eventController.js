@@ -53,7 +53,7 @@ exports.getAllEvents = async (req, res, next) => {
     const events = await Event.find(filter).sort(sortOption);
     const stats = getEventStats(events);
 
-    res.render('events', {
+    res.render('events/index', {
       title: 'All Events',
       events,
       ...stats,
@@ -76,7 +76,7 @@ exports.getManagePage = async (req, res, next) => {
     const events = await Event.find().sort({ createdAt: -1 });
     const stats = getEventStats(events);
 
-    res.render('events', {
+    res.render('events/index', {
       title: 'Manage Events',
       events,
       ...stats,
@@ -167,27 +167,25 @@ exports.updateEvent = async (req, res, next) => {
       image
     } = req.body;
 
-    const finalCapacity = Number(totalCapacity || capacity);
+    const event = await Event.findById(req.params.id);
 
-    const updatedEvent = await Event.findByIdAndUpdate(
-      req.params.id,
-      {
-        title,
-        description,
-        category,
-        location: location || venue,
-        date,
-        price: Number(price),
-        totalCapacity: finalCapacity,
-        imageUrl: imageUrl || image || '#cccccc'
-      },
-      { new: true, runValidators: true }
-    );
-
-    if (!updatedEvent) {
+    if (!event) {
       req.flash('error', 'Event not found.');
       return res.redirect('/events/manage');
     }
+
+    const finalCapacity = Number(totalCapacity || capacity || event.totalCapacity);
+
+    event.title = title;
+    event.description = description;
+    event.category = category;
+    event.location = location || venue;
+    event.date = date;
+    event.price = Number(price);
+    event.totalCapacity = finalCapacity;
+    event.imageUrl = imageUrl || image || event.imageUrl || '#cccccc';
+
+    await event.save();
 
     req.flash('success', 'Event updated successfully.');
     res.redirect('/events/manage');
